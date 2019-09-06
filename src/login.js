@@ -41,7 +41,7 @@ export default class Login extends React.Component {
                 }
 
             })
-            .catch(function(err){
+            .catch((err) => {
                 console.log('/login axios error: ', err);
                 this.setState({ error: true });
             });
