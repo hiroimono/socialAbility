@@ -15,3 +15,14 @@ exports.registerUser = (name, surname, email, password) => {
         [name, surname, email, password]
     );
 };
+
+exports.getPassword = email => {
+    return db
+        .query(
+            `SELECT password, id FROM userlist WHERE email=$1`,
+            [email]
+        )
+        .then(({ rows }) => {
+            return rows;
+        });
+};
