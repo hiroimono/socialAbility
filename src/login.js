@@ -8,6 +8,9 @@ export default class Login extends React.Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.login = this.login.bind(this);
+        this.state = {
+            error: false
+        };
     }
 
     handleChange (e) {
@@ -29,12 +32,18 @@ export default class Login extends React.Component {
         console.log('user: ', userLoginInfo);
         axios
             .post('/login', userLoginInfo)
-            .then(function(res) {
-                console.log('/login, data of loggedin user: ', res.data);
-                location.replace("/");
+            .then((res) => {
+                if (res.data.success) {
+                    console.log('/login, data of loggedin user: ', res.data);
+                    location.replace("/");
+                } else {
+                    this.setState({ error: true });
+                }
+
             })
             .catch(function(err){
                 console.log('/login axios error: ', err);
+                this.setState({ error: true });
             });
     }
 
@@ -42,6 +51,7 @@ export default class Login extends React.Component {
     render(){
         return (
             <div>
+                { this.state.error && <p>Something went wrong. Please try again!</p> }
                 <form>
                     <label>E-mail:</label>
                     <input

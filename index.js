@@ -49,13 +49,20 @@ app.post('/register', (req, res) => {
             )
                 .then(({rows}) => {
                     console.log("Assigned information for new user: ", rows);
-                    res.json(rows);
+                    req.session.userID = rows[0].id;
+                    console.log('/register, req.session.userID: ', req.session.userID);
+                    res.json({success: true});
                 })
                 .catch(err => {
                     console.log('/register, POST request error: ', err);
+                    res.json({success: false});
                 });
         })
-        .catch( err => console.log('/register, hash error: ', err));
+        .catch( err => {
+            console.log('/register, hash error: ', err);
+            res.json({success: false});
+        });
+
 });
 
 app.post('/login', (req, res) => {
@@ -66,10 +73,10 @@ app.post('/login', (req, res) => {
                 .then(match => {
                     if(match){
                         console.log('user logged in!!!');
-                        res.json(result.rows);
-                        // req.session.userID = result[0].id;
-                        // console.log('req.session userID: ', req.session.userID);
-                        // req.session.LOGIN= true;
+                        res.json({success: true});
+                        req.session.userID = result[0].id;
+                        console.log('req.session userID: ', req.session.userID);
+                        req.session.LOGIN= true;
                         // db.getSignature(result[0].id)
                         //     .then((rows) => {
                         //         req.session.signatureID = rows.id;
@@ -90,13 +97,12 @@ app.post('/login', (req, res) => {
                         //     res.redirect('/petition/1');
                         // });
                     } else {
-                        res.render('signin', {
-                            errors: 'Sign in failed! Please try again.'
-                        });
+                        res.json({success: false});
                     }
                 })
                 .catch( err => {
                     console.log('Login page error: ', err);
+                    res.json({success: false});
                     // res.render('signin', {
                     //     errors: 'Sign in failed! Please try again.'
                     // });
@@ -104,6 +110,7 @@ app.post('/login', (req, res) => {
         })
         .catch( err => {
             console.log('Login page error: ', err);
+            res.json({success: false});
             // res.render('signin', {
             //     layout: 'main',
             //     errors: 'Login failed! Please try again.'

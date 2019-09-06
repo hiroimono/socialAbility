@@ -7,6 +7,9 @@ export default class Registration extends React.Component {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.register = this.register.bind(this);
+        this.state = {
+            error: false
+        };
     }
 
     handleChange (e) {
@@ -29,18 +32,24 @@ export default class Registration extends React.Component {
         console.log('user: ', user);
         axios
             .post('/register', user)
-            .then(function(res) {
-                console.log('/register, data of registered user: ', res.data);
-                location.replace("/welcome#/login");
+            .then((res) => {
+                if(res.data.success){
+                    console.log('/register, data of registered user: ', res.data);
+                    location.replace("/welcome#/login");
+                } else {
+                    this.setState({error: true});
+                }
             })
             .catch(function(err){
                 console.log('/register axios error: ', err);
+                this.setState({error: true});
             });
     }
 
     render(){
         return (
             <div>
+                { this.state.error && <p>Something went wrong. Please try again!</p> }
                 <form>
                     <label>Name:</label>
                     <input
